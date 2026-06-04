@@ -10,7 +10,14 @@ import {
   StatsGrid,
   StatCard,
   TableContainer,
-  Table
+  Table,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  FormSection,
+  FormGroup,
+  ModalFooter
 } from "./home.styles";
 
 interface User {
@@ -95,6 +102,20 @@ const filesData: File[] = [
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState<"usuarios" | "fileserver">("usuarios");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    requestType: "",
+    cargo: "",
+    departamento: "",
+    unidade: "",
+    tempoEmpresa: "",
+    gestor: "",
+    sistemaSolicitado: "",
+    tipoAcesso: "",
+    nivelPrivilegio: "",
+    criticidadeSistema: "",
+    justificativa: ""
+  });
 
   // Calculate user statistics
   const totalUsers = usersData.length;
@@ -109,7 +130,10 @@ export default function HomePage() {
 
   return (
     <main style={{ marginTop: "80px" }}>
-      <Header head_type="home" />
+      <Header 
+        head_type="home" 
+        onOpenModal={() => setIsModalOpen(true)}
+      />
       <HomeContainer>
         <HeroSection>
           <h2>IAM para seu negócio</h2>
@@ -241,6 +265,196 @@ export default function HomePage() {
           )}
         </DashboardContent>
       </HomeContainer>
+
+      {/* Modal */}
+      <ModalOverlay isOpen={isModalOpen} onClick={() => setIsModalOpen(false)} />
+      <ModalContent isOpen={isModalOpen}>
+        <ModalHeader>
+          <h2>Solicitar Acesso</h2>
+          <button onClick={() => setIsModalOpen(false)}>✕</button>
+        </ModalHeader>
+
+        <ModalBody>
+          {/* Tipo de Solicitação */}
+          <FormSection>
+            <h3>Tipo de Solicitação</h3>
+            <FormGroup>
+              <select 
+                value={formData.requestType} 
+                onChange={(e) => setFormData({...formData, requestType: e.target.value})}
+              >
+                <option value="">Selecione...</option>
+                <option value="sistema">Sistema</option>
+                <option value="pasta">Pasta</option>
+                <option value="arquivo">Arquivo</option>
+              </select>
+            </FormGroup>
+          </FormSection>
+
+          {/* Dados do Usuário */}
+          <FormSection>
+            <h3>Dados do Usuário</h3>
+            <FormGroup>
+              <label>Cargo</label>
+              <select 
+                value={formData.cargo}
+                onChange={(e) => setFormData({...formData, cargo: e.target.value})}
+              >
+                <option value="">Selecione...</option>
+                <option value="analista-jr">Analista Jr</option>
+                <option value="analista-pl">Analista Pl</option>
+                <option value="analista-sr">Analista Sr</option>
+                <option value="coordenador">Coordenador</option>
+                <option value="gerente">Gerente</option>
+                <option value="diretor">Diretor</option>
+                <option value="estagiario">Estagiário</option>
+                <option value="consultor">Consultor</option>
+              </select>
+            </FormGroup>
+            <FormGroup>
+              <label>Departamento</label>
+              <select 
+                value={formData.departamento}
+                onChange={(e) => setFormData({...formData, departamento: e.target.value})}
+              >
+                <option value="">Selecione...</option>
+                <option value="ti">TI</option>
+                <option value="fin">Financeiro</option>
+                <option value="rh">RH</option>
+                <option value="jur">Jurídico</option>
+                <option value="op">Operações</option>
+                <option value="com">Comercial</option>
+                <option value="aud">Auditoria</option>
+                <option value="comp">Compliance</option>
+              </select>
+            </FormGroup>
+            <FormGroup>
+              <label>Unidade Organizacional</label>
+              <select 
+                value={formData.unidade}
+                onChange={(e) => setFormData({...formData, unidade: e.target.value})}
+              >
+                <option value="">Selecione...</option>
+                <option value="matriz">Matriz</option>
+                <option value="sp">São Paulo</option>
+                <option value="rj">Rio de Janeiro</option>
+                <option value="mg">Minas Gerais</option>
+                <option value="rs">Rio Grande do Sul</option>
+              </select>
+            </FormGroup>
+            <FormGroup>
+              <label>Tempo de Empresa</label>
+              <select 
+                value={formData.tempoEmpresa}
+                onChange={(e) => setFormData({...formData, tempoEmpresa: e.target.value})}
+              >
+                <option value="">Selecione...</option>
+                <option value="menos-1">Menos de 1 ano</option>
+                <option value="1-2">1-2 anos</option>
+                <option value="2-5">2-5 anos</option>
+                <option value="mais-5">Mais de 5 anos</option>
+              </select>
+            </FormGroup>
+            <FormGroup>
+              <label>Gestor Responsável</label>
+              <select 
+                value={formData.gestor}
+                onChange={(e) => setFormData({...formData, gestor: e.target.value})}
+              >
+                <option value="">Selecione...</option>
+                <option value="joao-silva">João Silva</option>
+                <option value="maria-santos">Maria Santos</option>
+                <option value="pedro-oliveira">Pedro Oliveira</option>
+                <option value="ana-costa">Ana Costa</option>
+                <option value="carlos-ferreira">Carlos Ferreira</option>
+              </select>
+            </FormGroup>
+          </FormSection>
+
+          {/* Dados da Solicitação */}
+          <FormSection>
+            <h3>Dados da Solicitação</h3>
+            <FormGroup>
+              <label>Sistema Solicitado</label>
+              <select 
+                value={formData.sistemaSolicitado}
+                onChange={(e) => setFormData({...formData, sistemaSolicitado: e.target.value})}
+              >
+                <option value="">Selecione...</option>
+                <option value="erp-sap">ERP SAP</option>
+                <option value="core-bancario">Core Bancário</option>
+                <option value="crm-salesforce">CRM Salesforce</option>
+                <option value="bi-tableau">BI Tableau</option>
+                <option value="active-directory">Active Directory</option>
+                <option value="aws-console">AWS Console</option>
+                <option value="folha-pagamento">Folha de Pagamento</option>
+                <option value="sistema-fiscal">Sistema Fiscal</option>
+              </select>
+            </FormGroup>
+            <FormGroup>
+              <label>Tipo de Acesso</label>
+              <select 
+                value={formData.tipoAcesso}
+                onChange={(e) => setFormData({...formData, tipoAcesso: e.target.value})}
+              >
+                <option value="">Selecione...</option>
+                <option value="leitura">Leitura</option>
+                <option value="escrita">Escrita</option>
+                <option value="admin">Administrador</option>
+                <option value="aprovador">Aprovador</option>
+                <option value="auditor">Auditor</option>
+                <option value="super-usuario">Super Usuário</option>
+              </select>
+            </FormGroup>
+            <FormGroup>
+              <label>Nível de Privilégio</label>
+              <select 
+                value={formData.nivelPrivilegio}
+                onChange={(e) => setFormData({...formData, nivelPrivilegio: e.target.value})}
+              >
+                <option value="">Selecione...</option>
+                <option value="viewer">Viewer</option>
+                <option value="editor">Editor</option>
+                <option value="admin">Administrador</option>
+              </select>
+            </FormGroup>
+            <FormGroup>
+              <label>Criticidade do Sistema</label>
+              <select 
+                value={formData.criticidadeSistema}
+                onChange={(e) => setFormData({...formData, criticidadeSistema: e.target.value})}
+              >
+                <option value="">Selecione...</option>
+                <option value="baixa">Baixa</option>
+                <option value="media">Média</option>
+                <option value="alta">Alta</option>
+                <option value="critica">Crítica</option>
+              </select>
+            </FormGroup>
+            <FormGroup>
+              <label>Justificativa</label>
+              <textarea 
+                value={formData.justificativa}
+                onChange={(e) => setFormData({...formData, justificativa: e.target.value})}
+                placeholder="Descreva a justificativa da solicitação"
+              />
+            </FormGroup>
+          </FormSection>
+        </ModalBody>
+
+        <ModalFooter>
+          <button className="btn-cancel" onClick={() => setIsModalOpen(false)}>
+            Cancelar
+          </button>
+          <button className="btn-submit" onClick={() => {
+            console.log("Solicitação enviada:", formData);
+            setIsModalOpen(false);
+          }}>
+            Enviar Solicitação
+          </button>
+        </ModalFooter>
+      </ModalContent>
+
       <Footer />
     </main>
   );

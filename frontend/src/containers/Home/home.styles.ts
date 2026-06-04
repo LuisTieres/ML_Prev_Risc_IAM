@@ -206,3 +206,153 @@ export const Table = styled.table`
   }
 `;
 
+export const ModalOverlay = styled.div<{ isOpen: boolean }>`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: ${({ isOpen }) => (isOpen ? "block" : "none")};
+  z-index: 2000;
+`;
+
+export const ModalContent = styled.div<{ isOpen: boolean }>`
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 50%;
+  height: 100vh;
+  background: white;
+  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  transform: ${({ isOpen }) => (isOpen ? "translateX(0)" : "translateX(100%)")};
+  transition: transform 0.3s ease;
+  z-index: 2001;
+  overflow-y: auto;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+`;
+
+export const ModalHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  background: white;
+
+  h2 {
+    margin: 0;
+    font-size: 20px;
+    color: #0f172a;
+  }
+
+  button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #64748b;
+
+    &:hover {
+      color: #0f172a;
+    }
+  }
+`;
+
+export const ModalBody = styled.div`
+  flex: 1;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+`;
+
+export const FormSection = styled.div`
+  h3 {
+    margin: 0 0 16px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #0f172a;
+  }
+`;
+
+export const FormGroup = styled.div`
+  margin-bottom: 16px;
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #334e68;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+
+    &:focus {
+      outline: none;
+      border-color: #1e88e5;
+      box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.1);
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+`;
+
+export const ModalFooter = styled.div`
+  display: flex;
+  gap: 12px;
+  padding: 24px;
+  border-top: 1px solid #e5e7eb;
+  justify-content: flex-end;
+  position: sticky;
+  bottom: 0;
+  background: white;
+
+  button {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &.btn-cancel {
+      background: #f1f5f9;
+      color: #334e68;
+
+      &:hover {
+        background: #e2e8f0;
+      }
+    }
+
+    &.btn-submit {
+      background: #1e88e5;
+      color: white;
+
+      &:hover {
+        background: #1565c0;
+      }
+    }
+  }
+`;
+
