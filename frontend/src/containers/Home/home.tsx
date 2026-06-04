@@ -13,8 +13,99 @@ import {
   Table
 } from "./home.styles";
 
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  status: "Ativo" | "Pendente";
+  lastAccess: string;
+}
+
+interface File {
+  id: number;
+  name: string;
+  size: string;
+  type: string;
+  uploadedBy: string;
+  date: string;
+  permission: string;
+  shared: boolean;
+}
+
+const usersData: User[] = [
+  {
+    id: 1,
+    name: "João Silva",
+    email: "joao.silva@example.com",
+    role: "Admin",
+    status: "Ativo",
+    lastAccess: "2 minutos atrás"
+  },
+  {
+    id: 2,
+    name: "Maria Santos",
+    email: "maria.santos@example.com",
+    role: "Gerente",
+    status: "Ativo",
+    lastAccess: "15 minutos atrás"
+  },
+  {
+    id: 3,
+    name: "Pedro Oliveira",
+    email: "pedro.oliveira@example.com",
+    role: "Usuário",
+    status: "Pendente",
+    lastAccess: "Nunca"
+  }
+];
+
+const filesData: File[] = [
+  {
+    id: 1,
+    name: "Documentação_IAM.pdf",
+    size: "2.4 MB",
+    type: "PDF",
+    uploadedBy: "João Silva",
+    date: "15/05/2026",
+    permission: "Leitura",
+    shared: true
+  },
+  {
+    id: 2,
+    name: "Relatório_Acesso.xlsx",
+    size: "1.1 MB",
+    type: "XLSX",
+    uploadedBy: "Maria Santos",
+    date: "14/05/2026",
+    permission: "Leitura/Escrita",
+    shared: false
+  },
+  {
+    id: 3,
+    name: "Configurações_Sistema.json",
+    size: "356 KB",
+    type: "JSON",
+    uploadedBy: "Pedro Oliveira",
+    date: "12/05/2026",
+    permission: "Leitura",
+    shared: true
+  }
+];
+
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState<"usuarios" | "fileserver">("usuarios");
+
+  // Calculate user statistics
+  const totalUsers = usersData.length;
+  const activeUsers = usersData.filter(u => u.status === "Ativo").length;
+  const pendingUsers = usersData.filter(u => u.status === "Pendente").length;
+
+  // Calculate file statistics
+  const totalFolders = 12;
+  const totalFiles = filesData.length;
+  const totalStorage = "4.5 GB";
+  const sharedFiles = filesData.filter(f => f.shared).length;
 
   return (
     <main style={{ marginTop: "80px" }}>
@@ -48,15 +139,15 @@ export default function HomePage() {
               <StatsGrid>
                 <StatCard>
                   <h4>Total de Usuários</h4>
-                  <p className="stat-value">42</p>
+                  <p className="stat-value">{totalUsers}</p>
                 </StatCard>
                 <StatCard>
                   <h4>Usuários Ativos</h4>
-                  <p className="stat-value">38</p>
+                  <p className="stat-value">{activeUsers}</p>
                 </StatCard>
                 <StatCard>
                   <h4>Aguardando Aprovação</h4>
-                  <p className="stat-value">4</p>
+                  <p className="stat-value">{pendingUsers}</p>
                 </StatCard>
               </StatsGrid>
 
@@ -73,30 +164,20 @@ export default function HomePage() {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>João Silva</td>
-                      <td>joao.silva@example.com</td>
-                      <td>Admin</td>
-                      <td><span className="badge-active">Ativo</span></td>
-                      <td>2 minutos atrás</td>
-                      <td><button className="btn-action">Editar</button></td>
-                    </tr>
-                    <tr>
-                      <td>Maria Santos</td>
-                      <td>maria.santos@example.com</td>
-                      <td>Gerente</td>
-                      <td><span className="badge-active">Ativo</span></td>
-                      <td>15 minutos atrás</td>
-                      <td><button className="btn-action">Editar</button></td>
-                    </tr>
-                    <tr>
-                      <td>Pedro Oliveira</td>
-                      <td>pedro.oliveira@example.com</td>
-                      <td>Usuário</td>
-                      <td><span className="badge-pending">Pendente</span></td>
-                      <td>Nunca</td>
-                      <td><button className="btn-action">Editar</button></td>
-                    </tr>
+                    {usersData.map(user => (
+                      <tr key={user.id}>
+                        <td>{user.name}</td>
+                        <td>{user.email}</td>
+                        <td>{user.role}</td>
+                        <td>
+                          <span className={user.status === "Ativo" ? "badge-active" : "badge-pending"}>
+                            {user.status}
+                          </span>
+                        </td>
+                        <td>{user.lastAccess}</td>
+                        <td><button className="btn-action">Editar</button></td>
+                      </tr>
+                    ))}
                   </tbody>
                 </Table>
               </TableContainer>
@@ -106,19 +187,19 @@ export default function HomePage() {
               <StatsGrid>
                 <StatCard>
                   <h4>Pastas</h4>
-                  <p className="stat-value">12</p>
+                  <p className="stat-value">{totalFolders}</p>
                 </StatCard>
                 <StatCard>
                   <h4>Arquivos</h4>
-                  <p className="stat-value">156</p>
+                  <p className="stat-value">{totalFiles}</p>
                 </StatCard>
                 <StatCard>
                   <h4>Armazenamento</h4>
-                  <p className="stat-value">4.5 GB</p>
+                  <p className="stat-value">{totalStorage}</p>
                 </StatCard>
                 <StatCard>
                   <h4>Compartilhados</h4>
-                  <p className="stat-value">28</p>
+                  <p className="stat-value">{sharedFiles}</p>
                 </StatCard>
               </StatsGrid>
 
@@ -137,36 +218,22 @@ export default function HomePage() {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>Documentação_IAM.pdf</td>
-                      <td>2.4 MB</td>
-                      <td>PDF</td>
-                      <td>João Silva</td>
-                      <td>15/05/2026</td>
-                      <td>Leitura</td>
-                      <td><span className="badge-shared">Sim</span></td>
-                      <td><button className="btn-action">Editar</button></td>
-                    </tr>
-                    <tr>
-                      <td>Relatório_Acesso.xlsx</td>
-                      <td>1.1 MB</td>
-                      <td>XLSX</td>
-                      <td>Maria Santos</td>
-                      <td>14/05/2026</td>
-                      <td>Leitura/Escrita</td>
-                      <td><span className="badge-not-shared">Não</span></td>
-                      <td><button className="btn-action">Editar</button></td>
-                    </tr>
-                    <tr>
-                      <td>Configurações_Sistema.json</td>
-                      <td>356 KB</td>
-                      <td>JSON</td>
-                      <td>Pedro Oliveira</td>
-                      <td>12/05/2026</td>
-                      <td>Leitura</td>
-                      <td><span className="badge-shared">Sim</span></td>
-                      <td><button className="btn-action">Editar</button></td>
-                    </tr>
+                    {filesData.map(file => (
+                      <tr key={file.id}>
+                        <td>{file.name}</td>
+                        <td>{file.size}</td>
+                        <td>{file.type}</td>
+                        <td>{file.uploadedBy}</td>
+                        <td>{file.date}</td>
+                        <td>{file.permission}</td>
+                        <td>
+                          <span className={file.shared ? "badge-shared" : "badge-not-shared"}>
+                            {file.shared ? "Sim" : "Não"}
+                          </span>
+                        </td>
+                        <td><button className="btn-action">Editar</button></td>
+                      </tr>
+                    ))}
                   </tbody>
                 </Table>
               </TableContainer>
