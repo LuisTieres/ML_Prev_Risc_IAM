@@ -8,6 +8,9 @@ export default function Header(_: Heads) {
         <img src="/assets/logo.png" alt="Gerenciamento de Acesso" />
         <h1>Gerenciamento de Acesso</h1>
       </div>
+      <div className="entra-cadastro">
+        <button className="btn-entrar">Solicitar Acesso</button>
+      </div>
     </HeaderContainer>
   );
 }
