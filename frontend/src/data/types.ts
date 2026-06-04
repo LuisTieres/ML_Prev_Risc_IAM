@@ -33,4 +33,32 @@ export interface AccessRequest {
   justificativa: string;
   dataSubmissao: string;
   status: "Pendente" | "Aprovada" | "Rejeitada";
+  // ── Campos adicionados pelo ML ──────────────────
+  risco?: "Baixo" | "Medio" | "Alto";
+  scoreRisco?: number;
+  recomendacaoML?: "APROVAR" | "REVISAR" | "REJEITAR";
+}
+
+// Payload enviado para a API do ML
+export interface MLPayload {
+  cargo: string;
+  departamento: string;
+  sistema: string;
+  tipo_acesso: string;
+  criticidade: string;
+  tempo_empresa_meses: number;
+  acessos_ativos: number;
+  aprovacoes_anteriores: number;
+  revogacoes_anteriores: number;
+  violacoes_historicas: number;
+  conflito_sod: number;
+  conformidade_ok: number;
+}
+
+// Resposta da API do ML
+export interface MLResponse {
+  risco: "Baixo" | "Medio" | "Alto";
+  score: number;
+  probabilidades: Record<string, number>;
+  recomendacao: "APROVAR" | "REVISAR" | "REJEITAR";
 }
