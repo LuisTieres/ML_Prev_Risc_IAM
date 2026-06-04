@@ -24,7 +24,6 @@ import { usersData } from "../../data/users";
 import { filesData } from "../../data/files";
 import { avaliarRiscoML } from "../../data/iamService";
 
-// ── Badge de risco ────────────────────────────────────────────────────────
 const RISCO_STYLE: Record<string, React.CSSProperties> = {
   Baixo:  { background: "#d1fae5", color: "#065f46", borderRadius: 12, padding: "2px 10px", fontWeight: 700, fontSize: 12 },
   Medio:  { background: "#fef3c7", color: "#92400e", borderRadius: 12, padding: "2px 10px", fontWeight: 700, fontSize: 12 },
@@ -40,7 +39,6 @@ function RiscoBadge({ risco, score }: { risco?: string; score?: number }) {
   );
 }
 
-// ── Resultado do ML exibido no modal ──────────────────────────────────────
 function MLResultBox({ risco, score, recomendacao }: {
   risco: string; score: number; recomendacao: string;
 }) {
@@ -76,7 +74,6 @@ function MLResultBox({ risco, score, recomendacao }: {
   );
 }
 
-// ── Componente principal ──────────────────────────────────────────────────
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState<"usuarios" | "fileserver" | "solicitacoes">("usuarios");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -111,7 +108,6 @@ export default function HomePage() {
     setMlResult(null);
   };
 
-  // Estatísticas
   const totalUsers    = usersData.length;
   const activeUsers   = usersData.filter(u => u.status === "Ativo").length;
   const pendingUsers  = usersData.filter(u => u.status === "Pendente").length;
@@ -120,7 +116,6 @@ export default function HomePage() {
   const totalStorage  = "4.5 GB";
   const sharedFiles   = filesData.filter(f => f.shared).length;
 
-  // ── Enviar solicitação ────────────────────────────────────────────────
   const handleSubmit = async () => {
     setIsLoading(true);
     setMlResult(null);
