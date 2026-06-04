@@ -40,6 +40,23 @@ interface File {
   shared: boolean;
 }
 
+interface AccessRequest {
+  id: number;
+  requestType: string;
+  cargo: string;
+  departamento: string;
+  unidade: string;
+  tempoEmpresa: string;
+  gestor: string;
+  sistemaSolicitado: string;
+  tipoAcesso: string;
+  nivelPrivilegio: string;
+  criticidadeSistema: string;
+  justificativa: string;
+  dataSubmissao: string;
+  status: "Pendente" | "Aprovada" | "Rejeitada";
+}
+
 const usersData: User[] = [
   {
     id: 1,
@@ -101,8 +118,12 @@ const filesData: File[] = [
 ];
 
 export default function HomePage() {
-  const [activeTab, setActiveTab] = useState<"usuarios" | "fileserver">("usuarios");
+  const [activeTab, setActiveTab] = useState<"usuarios" | "fileserver" | "solicitacoes">("usuarios");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [accessRequests, setAccessRequests] = useState<AccessRequest[]>(() => {
+    const saved = localStorage.getItem("accessRequests");
+    return saved ? JSON.parse(saved) : [];
+  });
   const [formData, setFormData] = useState({
     requestType: "",
     cargo: "",
@@ -155,6 +176,12 @@ export default function HomePage() {
           >
             File Server
           </TabButton>
+          <TabButton 
+            active={activeTab === "solicitacoes"} 
+            onClick={() => setActiveTab("solicitacoes")}
+          >
+            Solicitações ({accessRequests.length})
+          </TabButton>
         </NavTabs>
 
         <DashboardContent>
@@ -206,7 +233,7 @@ export default function HomePage() {
                 </Table>
               </TableContainer>
             </>
-          ) : (
+          ) : activeTab === "fileserver" ? (
             <>
               <StatsGrid>
                 <StatCard>
@@ -258,6 +285,72 @@ export default function HomePage() {
                         <td><button className="btn-action">Editar</button></td>
                       </tr>
                     ))}
+                  </tbody>
+                </Table>
+              </TableContainer>
+            </>
+          ) : (
+            <>
+              <StatsGrid>
+                <StatCard>
+                  <h4>Total de Solicitações</h4>
+                  <p className="stat-value">{accessRequests.length}</p>
+                </StatCard>
+                <StatCard>
+                  <h4>Pendentes</h4>
+                  <p className="stat-value">{accessRequests.filter(r => r.status === "Pendente").length}</p>
+                </StatCard>
+                <StatCard>
+                  <h4>Aprovadas</h4>
+                  <p className="stat-value">{accessRequests.filter(r => r.status === "Aprovada").length}</p>
+                </StatCard>
+                <StatCard>
+                  <h4>Rejeitadas</h4>
+                  <p className="stat-value">{accessRequests.filter(r => r.status === "Rejeitada").length}</p>
+                </StatCard>
+              </StatsGrid>
+
+              <TableContainer>
+                <Table>
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Cargo</th>
+                      <th>Departamento</th>
+                      <th>Sistema</th>
+                      <th>Tipo de Acesso</th>
+                      <th>Criticidade</th>
+                      <th>Data</th>
+                      <th>Status</th>
+                      <th>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {accessRequests.length === 0 ? (
+                      <tr>
+                        <td colSpan={9} style={{ textAlign: "center", padding: "32px" }}>
+                          Nenhuma solicitação ainda
+                        </td>
+                      </tr>
+                    ) : (
+                      accessRequests.map(request => (
+                        <tr key={request.id}>
+                          <td>#{request.id}</td>
+                          <td>{request.cargo || "-"}</td>
+                          <td>{request.departamento || "-"}</td>
+                          <td>{request.sistemaSolicitado || "-"}</td>
+                          <td>{request.tipoAcesso || "-"}</td>
+                          <td>{request.criticidadeSistema || "-"}</td>
+                          <td>{request.dataSubmissao}</td>
+                          <td>
+                            <span className={request.status === "Aprovada" ? "badge-active" : request.status === "Rejeitada" ? "badge-not-shared" : "badge-pending"}>
+                              {request.status}
+                            </span>
+                          </td>
+                          <td><button className="btn-action">Visualizar</button></td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </Table>
               </TableContainer>
@@ -447,7 +540,29 @@ export default function HomePage() {
             Cancelar
           </button>
           <button className="btn-submit" onClick={() => {
-            console.log("Solicitação enviada:", formData);
+            const newRequest: AccessRequest = {
+              id: accessRequests.length + 1,
+              ...formData,
+              dataSubmissao: new Date().toLocaleDateString('pt-BR'),
+              status: "Pendente"
+            };
+            const updatedRequests = [...accessRequests, newRequest];
+            setAccessRequests(updatedRequests);
+            localStorage.setItem("accessRequests", JSON.stringify(updatedRequests));
+            console.log("Solicitação salva:", newRequest);
+            setFormData({
+              requestType: "",
+              cargo: "",
+              departamento: "",
+              unidade: "",
+              tempoEmpresa: "",
+              gestor: "",
+              sistemaSolicitado: "",
+              tipoAcesso: "",
+              nivelPrivilegio: "",
+              criticidadeSistema: "",
+              justificativa: ""
+            });
             setIsModalOpen(false);
           }}>
             Enviar Solicitação
