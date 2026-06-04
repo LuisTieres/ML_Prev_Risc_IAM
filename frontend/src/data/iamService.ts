@@ -38,12 +38,12 @@ const SISTEMA_MAP: Record<string, string> = {
 };
 
 const ACESSO_MAP: Record<string, string> = {
-  "leitura":      "Leitura",
-  "escrita":      "Escrita",
-  "admin":        "Administrador",
-  "aprovador":    "Aprovador",
-  "auditor":      "Auditor",
-  "super-usuario":"Super Usuario",
+  "leitura":       "Leitura",
+  "escrita":       "Escrita",
+  "admin":         "Administrador",
+  "aprovador":     "Aprovador",
+  "auditor":       "Auditor",
+  "super-usuario": "Super Usuario",
 };
 
 const CRITICIDADE_MAP: Record<string, string> = {
@@ -74,13 +74,12 @@ export async function avaliarRiscoML(formData: {
 }): Promise<MLResponse | null> {
 
   const payload: MLPayload = {
-    cargo:                 CARGO_MAP[formData.cargo]            ?? formData.cargo,
-    departamento:          DEPARTAMENTO_MAP[formData.departamento] ?? formData.departamento,
-    sistema:               SISTEMA_MAP[formData.sistemaSolicitado] ?? formData.sistemaSolicitado,
-    tipo_acesso:           ACESSO_MAP[formData.tipoAcesso]      ?? formData.tipoAcesso,
+    cargo:                 CARGO_MAP[formData.cargo]               ?? formData.cargo,
+    departamento:          DEPARTAMENTO_MAP[formData.departamento]  ?? formData.departamento,
+    sistema:               SISTEMA_MAP[formData.sistemaSolicitado]  ?? formData.sistemaSolicitado,
+    tipo_acesso:           ACESSO_MAP[formData.tipoAcesso]          ?? formData.tipoAcesso,
     criticidade:           CRITICIDADE_MAP[formData.criticidadeSistema] ?? formData.criticidadeSistema,
-    tempo_empresa_meses:   TEMPO_MAP[formData.tempoEmpresa]     ?? 12,
-    // Valores padrão — expanda o formulário conforme precisar
+    tempo_empresa_meses:   TEMPO_MAP[formData.tempoEmpresa]         ?? 12,
     acessos_ativos:        5,
     aprovacoes_anteriores: 0,
     revogacoes_anteriores: 0,
@@ -88,6 +87,12 @@ export async function avaliarRiscoML(formData: {
     conflito_sod:          0,
     conformidade_ok:       1,
   };
+
+  // Log do payload enviado
+  console.log("═══════════════════════════════════");
+  console.log("📤 IAM ML — Payload enviado");
+  console.log("═══════════════════════════════════");
+  console.table(payload);
 
   try {
     const res = await fetch(`${ML_API_URL}/prever-risco`, {
@@ -97,7 +102,24 @@ export async function avaliarRiscoML(formData: {
     });
 
     if (!res.ok) throw new Error(`API retornou ${res.status}`);
-    return await res.json() as MLResponse;
+
+    const data = await res.json() as MLResponse;
+
+    // Log do resultado
+    console.log("═══════════════════════════════════");
+    console.log("🤖 IAM ML — Resultado da Predição");
+    console.log("═══════════════════════════════════");
+    console.log(`🎯 Risco:        ${data.risco}`);
+    console.log(`📊 Score:        ${data.score}/100`);
+    console.log(`✅ Recomendação: ${data.recomendacao}`);
+    console.log("📈 Probabilidades:");
+    Object.entries(data.probabilidades).forEach(([classe, prob]) => {
+      const barra = "█".repeat(Math.round((prob as number) * 20));
+      console.log(`   ${classe.padEnd(6)} ${barra} ${((prob as number) * 100).toFixed(1)}%`);
+    });
+    console.log("═══════════════════════════════════");
+
+    return data;
 
   } catch (err) {
     console.warn("[IAM ML] API indisponível, seguindo sem score:", err);
