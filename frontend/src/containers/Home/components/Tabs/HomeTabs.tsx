@@ -1,6 +1,5 @@
-import { NavTabs, TabButton } from "../home.styles";
-
-type HomeTab = "usuarios" | "fileserver" | "solicitacoes";
+import { NavTabs, TabButton } from "../../styles/home.styles";
+import type { HomeTab } from "../../types/home.types";
 
 type Props = {
   activeTab: HomeTab;

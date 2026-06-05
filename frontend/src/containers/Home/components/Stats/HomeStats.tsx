@@ -1,9 +1,5 @@
-import { StatCard, StatsGrid } from "../home.styles";
-
-type StatItem = {
-  label: string;
-  value: string | number;
-};
+import { StatCard, StatsGrid } from "../../styles/home.styles";
+import type { StatItem } from "../../types/home.types";
 
 type Props = {
   items: StatItem[];

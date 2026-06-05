@@ -1,73 +1,105 @@
-# React + TypeScript + Vite
+# IAM Risk Predictor — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interface web para predição de risco em solicitações de acesso (IAM). O usuário preenche um formulário com os dados da solicitação, o frontend envia para a API de ML e exibe o resultado — nível de risco, score e recomendação de aprovação ou rejeição — antes de confirmar o registro.
 
-Currently, two official plugins are available:
+**Demo em produção:** [iam-luis-tieres.vercel.app](https://iam-luis-tieres.vercel.app)
+**Repositório da API / ML:** [github.com/LuisTieres/ML_IAM](https://github.com/LuisTieres/ML_IAM)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## Tecnologias
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **React** + **TypeScript**
+- **Vite**
+- **Styled Components**
+- Deploy via **Vercel**
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Como rodar localmente
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+**Pré-requisitos:** Node.js 18+ e npm.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+```bash
+# 1. Clone o repositório
+git clone https://github.com/LuisTieres/ML_Prev_Risc_IAM.git
+cd ML_Prev_Risc_IAM/frontend
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# 2. Instale as dependências
+npm install
+
+# 3. Configure a URL da API
+# Crie um arquivo .env na raiz do projeto /frontend com:
+VITE_API_URL=https://luistieres-iam-risk-predictor.hf.space
+
+# 4. Inicie o servidor de desenvolvimento
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+A aplicação estará disponível em `http://localhost:5173`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+---
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Estrutura do projeto
+
 ```
+frontend/
+├── src/
+│   ├── components/       # Componentes reutilizáveis (formulário, modal de resultado)
+│   ├── services/         # Chamadas à API de predição
+│   ├── types/            # Tipagens TypeScript
+│   └── App.tsx
+├── .env.example
+└── vite.config.ts
+```
+
+---
+
+## Fluxo de uso
+
+1. O usuário preenche o formulário com: cargo, departamento, sistema solicitado, tipo de acesso, criticidade, tempo de empresa, conflito de SoD e status de conformidade.
+2. O frontend envia um `POST` para a API com esses dados.
+3. A API retorna o nível de risco (`Alto`, `Médio` ou `Baixo`), o score (0–100) e a recomendação (`APROVAR` / `REVISAR` / `REJEITAR`).
+4. O resultado é exibido em um modal antes de o usuário confirmar o registro.
+
+**Exemplo de resposta da API:**
+```json
+{
+  "risco": "Baixo",
+  "score": 94,
+  "recomendacao": "APROVAR",
+  "probabilidades": {
+    "Alto": 0.006,
+    "Baixo": 0.938,
+    "Medio": 0.056
+  }
+}
+```
+
+---
+
+## API
+
+A API está hospedada no Hugging Face Spaces e é pública:
+
+```
+https://luistieres-iam-risk-predictor.hf.space
+```
+
+Documentação interativa (Swagger): [`/docs`](https://luistieres-iam-risk-predictor.hf.space/docs)
+
+Repositório da API + modelo: [github.com/LuisTieres/ML_IAM](https://github.com/LuisTieres/ML_IAM)
+
+---
+
+## Considerações
+
+Os resultados de performance do modelo (F2 > 0.98) foram obtidos em dados sintéticos gerados pelas mesmas regras usadas no treinamento. Em dados reais, o desempenho tende a ser menor, especialmente em casos intermediários ou em situações fora da distribuição de treino.
+
+O modelo atual não possui explicabilidade por solicitação — retorna o risco, mas não detalha quais variáveis mais influenciaram aquela predição específica. Implementar SHAP values seria o próximo passo natural.
+
+---
+
+## Autor
+
+**Luis Tieres** — [github.com/LuisTieres](https://github.com/LuisTieres)

@@ -1,8 +1,7 @@
-import { Table, TableContainer } from "../home.styles";
+import { Table, TableContainer } from "../../styles/home.styles";
 import type { AccessRequest, File, User } from "../../../data/types";
-import RiscoBadge from "./RiscoBadge";
-
-type HomeTab = "usuarios" | "fileserver" | "solicitacoes";
+import type { HomeTab } from "../../types/home.types";
+import RiscoBadge from "../Badge/RiscoBadge";
 
 type Props = {
   activeTab: HomeTab;

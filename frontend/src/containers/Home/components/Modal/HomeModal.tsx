@@ -1,17 +1,18 @@
-import { FormGroup, FormSection, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay } from "../home.styles";
-import type { AccessRequest } from "../../../data/types";
+import type { Dispatch, SetStateAction } from "react";
+import { FormGroup, FormSection, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay } from "../../styles/home.styles";
+import type { HomeFormData, HomeMLResult } from "../../types/home.types";
 import MLResultBox from "./MLResultBox";
 
-type FormData = Omit<AccessRequest, "id" | "dataSubmissao" | "status">;
+type FormData = HomeFormData;
 
 type Props = {
   isOpen: boolean;
   formData: FormData;
-  setFormData: React.Dispatch<React.SetStateAction<FormData>>;
+  setFormData: Dispatch<SetStateAction<FormData>>;
   onClose: () => void;
   onSubmit: () => Promise<void>;
   isLoading: boolean;
-  mlResult: { risco: string; score: number; recomendacao: string } | null;
+  mlResult: HomeMLResult;
 };
 
 export default function HomeModal({ isOpen, formData, setFormData, onClose, onSubmit, isLoading, mlResult }: Props) {
