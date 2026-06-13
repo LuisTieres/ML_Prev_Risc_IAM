@@ -1,9 +1,7 @@
 import type { MLPayload, MLResponse } from "./types";
 
-// ── Troque pela URL real quando subir o ML em produção ──
 const ML_API_URL = import.meta.env.VITE_ML_API_URL ?? "http://localhost:8000";
 
-// Mapeia os valores do formulário (slugs) para os valores que o ML espera
 const CARGO_MAP: Record<string, string> = {
   "analista-jr":  "Analista Jr",
   "analista-pl":  "Analista Pl",
