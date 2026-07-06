@@ -12,7 +12,7 @@ import { usersData } from "../../data/users";
 import { filesData } from "../../data/files";
 import { avaliarRiscoML } from "../../data/iamService";
 
-const initialFormData: HomeFormData = {
+const [formData, setFormData] = useState<HomeFormData>({
   requestType: "",
   cargo: "",
   departamento: "",
@@ -24,7 +24,11 @@ const initialFormData: HomeFormData = {
   nivelPrivilegio: "",
   criticidadeSistema: "",
   justificativa: "",
-};
+  // novos
+  usuarioSelecionado: "",
+  conflito_sod: "0",
+  motivo_sod: "",
+});
 
 const initialRequests = (): AccessRequest[] => {
   if (typeof window === "undefined") return [];

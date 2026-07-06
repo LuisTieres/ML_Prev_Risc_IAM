@@ -82,7 +82,7 @@ export async function avaliarRiscoML(formData: {
     aprovacoes_anteriores: 0,
     revogacoes_anteriores: 0,
     violacoes_historicas:  0,
-    conflito_sod:          0,
+    conflito_sod: formData.conflito_sod === "1" ? 1 : 0,
     conformidade_ok:       1,
   };
 
