@@ -47,12 +47,18 @@ export const usersData: User[] = Array.from({ length: 1000 }, (_, index) => {
   const id = index + 1;
   const name = getName(index);
 
+  // Permissões que o usuário já possui (base para cálculo de SoD)
+  const allPermissions = ["Leitura", "Escrita", "Auditor", "Aprovador", "Administrador", "Super Usuário"];
+  const numPermissions = (index % 3);  // 0, 1 ou 2 permissões por usuário
+  const permissions = allPermissions.slice(0, numPermissions);
+
   return {
     id,
     name,
     email: getEmail(name, index),
     role: getRole(index),
     status: getStatus(index),
-    lastAccess: getLastAccess(index)
+    lastAccess: getLastAccess(index),
+    permissions
   };
 });
